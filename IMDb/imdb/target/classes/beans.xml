@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans
+    http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
+	
+    
+   <bean id="daoAlbum" class="br.unb.cic.imdb.integracao.jpa.DAOAlbumJPA"/>
+   <!--  bean id="daoAlbum" class="br.unb.cic.imdb.integracao.memoria.DAOAlbumMemoria"/-->
+   
+   <bean id="daoAutor" class="br.unb.cic.imdb.integracao.jpa.DAOAutorJPA"/>
+   <!--  bean id="daoAutor" class="br.unb.cic.imdb.integracao.memoria.DAOAutorMemoria"/-->
+   
+   <bean id="daoAvaliacao" class="br.unb.cic.imdb.integracao.jpa.DAOAvaliacaoJPA"/>
+   <!--  bean id="daoAvaliacao" class="br.unb.cic.imdb.integracao.memoria.DAOAvaliacaoMemoria"/-->
+   
+   <bean id="daoFaixa" class="br.unb.cic.imdb.integracao.jpa.DAOFaixaJPA"/>
+   <!--  bean id="daoFaixa" class="br.unb.cic.imdb.integracao.memoria.DAOFaixaMemoria"/-->
+   
+    <bean id="daoFilme" class="br.unb.cic.imdb.integracao.jpa.DAOFilmeJPA"/>
+   <!--  bean id="daoFilme" class="br.unb.cic.imdb.integracao.memoria.DAOFilmeMemoria"/-->
+   
+   <bean id="daoGenero" class="br.unb.cic.imdb.integracao.jpa.DAOGeneroJPA"/>
+   <!--  bean id="daoGenero" class="br.unb.cic.imdb.integracao.memoria.DAOGeneroMemoria"/-->
+   
+   <bean id="daoUsuario" class="br.unb.cic.imdb.integracao.jpa.DAOUsuarioJPA"/>
+   <!--  bean id="daoUsuario" class="br.unb.cic.imdb.integracao.memoria.DAOUsuarioMemoria"/-->
+
+   <bean id="facade" class="br.unb.cic.imdb.negocio.IMDBFacade" scope="singleton">
+       <property name="daoAlbum" ref="daoAlbum" />
+      <property name="daoAutor" ref="daoAutor" />
+      <property name="daoAvaliacao" ref="daoAvaliacao" />
+      <property name="daoFaixa" ref="daoFaixa" />
+      <property name="daoFilme" ref="daoFilme" />
+      <property name="daoGenero" ref="daoGenero" />
+      <property name="daoUsuario" ref="daoUsuario" />
+   </bean>
+
+</beans>

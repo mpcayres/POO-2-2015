@@ -1,0 +1,209 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="pt"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../../.resources/report.gif" type="image/gif"/><title>GameEngine.java</title><link rel="stylesheet" href="../../../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../../.sessions.html" class="el_session">Sessions</a></span><a href="../../../index.html" class="el_report">Main (2) (13/10/2015 14:20:13)</a> &gt; <a href="../../index.html" class="el_group">GameOfLife</a> &gt; <a href="../index.html" class="el_bundle">src/main/java</a> &gt; <a href="index.source.html" class="el_package">br.unb.cic.lp.gol</a> &gt; <span class="el_source">GameEngine.java</span></div><h1>GameEngine.java</h1><pre class="source lang-java linenums">package br.unb.cic.lp.gol;
+
+import java.security.InvalidParameterException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
+
+/**
+ * Representa um ambiente (environment) do jogo GameOfLife;
+ * Essa implementacao segue o padrao de projeto Strategy, e a 
+ * classe GameEngine possui uma referencia para uma estrategia de 
+ * derivacao que pode ser alterada durante a execucao do jogo. 
+ */
+public class GameEngine {
+	private int height;
+	private int width;
+	private Cell[][] cells;
+	private Statistics statistics;
+	private EstrategiaDeDerivacao estrategia;
+
+	/**
+	 * Construtor da classe Environment.
+	 * 
+	 * @param height
+	 *            dimensao vertical do ambiente
+	 * @param width
+	 *            dimentsao horizontal do ambiente
+	 */
+<span class="fc" id="L29">	public GameEngine(Statistics statistics) {	</span>
+<span class="fc" id="L30">		this.statistics = statistics;</span>
+<span class="fc" id="L31">	}</span>
+	
+	public void setEngine(int height, int width){
+<span class="fc" id="L34">		this.height = height;</span>
+<span class="fc" id="L35">		this.width = width;</span>
+
+<span class="fc" id="L37">		cells = new Cell[height][width];</span>
+
+<span class="fc bfc" id="L39" title="All 2 branches covered.">		for (int i = 0; i &lt; height; i++) {</span>
+<span class="fc bfc" id="L40" title="All 2 branches covered.">			for (int j = 0; j &lt; width; j++) {</span>
+<span class="fc" id="L41">				cells[i][j] = new Cell();</span>
+			}
+		}
+<span class="fc" id="L44">	}</span>
+	
+	public void setEstrategia(EstrategiaDeDerivacao e) {
+<span class="fc" id="L47">		estrategia = e;</span>
+<span class="fc" id="L48">	}</span>
+
+	/**
+	 * Calcula uma nova geracao do ambiente. Essa implementacao delega para 
+	 * a estrategia de derivacao a logica necessaria para identificar 
+	 * se uma celula deve se tornar viva ou ser mantida viva na proxima 
+	 * geracao. 
+	 */
+	public void nextGeneration() {
+<span class="fc" id="L57">		List&lt;Cell&gt; mustRevive = new ArrayList&lt;Cell&gt;();</span>
+<span class="fc" id="L58">		List&lt;Cell&gt; mustKill = new ArrayList&lt;Cell&gt;();</span>
+<span class="fc bfc" id="L59" title="All 2 branches covered.">		for (int i = 0; i &lt; height; i++) {</span>
+<span class="fc bfc" id="L60" title="All 2 branches covered.">			for (int j = 0; j &lt; width; j++) {</span>
+<span class="fc bfc" id="L61" title="All 2 branches covered.">				if (estrategia.shouldRevive(i, j, this)) {</span>
+<span class="fc" id="L62">					mustRevive.add(cells[i][j]);</span>
+<span class="fc" id="L63">				} </span>
+<span class="fc bfc" id="L64" title="All 4 branches covered.">				else if ((!estrategia.shouldKeepAlive(i, j, this)) &amp;&amp; cells[i][j].isAlive()) {</span>
+<span class="fc" id="L65">					mustKill.add(cells[i][j]);</span>
+				}
+			}
+		}
+		
+<span class="fc" id="L70">		updateStatistics(mustRevive, mustKill);</span>
+<span class="fc" id="L71">	}</span>
+
+	/*
+	 * Metodo auxiliar que atualiza as estatisticas das celulas 
+	 * que foram mortas ou se tornaram vivas entre duas geracoes. 
+	 */
+	private void updateStatistics(List&lt;Cell&gt; mustRevive, List&lt;Cell&gt; mustKill) {
+<span class="fc bfc" id="L78" title="All 2 branches covered.">		for (Cell cell : mustRevive) {</span>
+<span class="fc" id="L79">			cell.revive();</span>
+<span class="fc" id="L80">			statistics.recordRevive();</span>
+		}
+		
+<span class="fc bfc" id="L83" title="All 2 branches covered.">		for (Cell cell : mustKill) {</span>
+<span class="fc" id="L84">			cell.kill();</span>
+<span class="fc" id="L85">			statistics.recordKill();</span>
+		}
+<span class="fc" id="L87">	}</span>
+	
+	/**
+	 * Torna a celula de posicao (i, j) viva
+	 * 
+	 * @param i posicao vertical da celula
+	 * @param j posicao horizontal da celula
+	 * 
+	 * @throws InvalidParameterException caso a posicao (i, j) nao seja valida.
+	 */
+	public void makeCellAlive(int i, int j) throws InvalidParameterException {
+<span class="pc bpc" id="L98" title="1 of 2 branches missed.">		if(validPosition(i, j)) {</span>
+<span class="fc" id="L99">			cells[i][j].revive();</span>
+<span class="fc" id="L100">			statistics.recordRevive();</span>
+<span class="fc" id="L101">		}</span>
+		else {
+<span class="nc" id="L103">			new InvalidParameterException(&quot;Invalid position (&quot; + i + &quot;, &quot; + j + &quot;)&quot; );</span>
+		}
+<span class="fc" id="L105">	}</span>
+	
+	public void makeCellDead(int i, int j) throws InvalidParameterException {
+<span class="pc bpc" id="L108" title="1 of 2 branches missed.">		if(validPosition(i, j)) {</span>
+<span class="fc" id="L109">			cells[i][j].kill();</span>
+<span class="fc" id="L110">			statistics.recordKill();</span>
+<span class="fc" id="L111">		}</span>
+		else {
+<span class="nc" id="L113">			new InvalidParameterException(&quot;Invalid position (&quot; + i + &quot;, &quot; + j + &quot;)&quot; );</span>
+		}
+<span class="fc" id="L115">	}</span>
+	
+	/**
+	 * Verifica se uma celula na posicao (i, j) estah viva.
+	 * 
+	 * @param i Posicao vertical da celula
+	 * @param j Posicao horizontal da celula
+	 * @return Verdadeiro caso a celula de posicao (i,j) esteja viva.
+	 * 
+	 * @throws InvalidParameterException caso a posicao (i,j) nao seja valida. 
+	 */
+	public boolean isCellAlive(int i, int j) throws InvalidParameterException {
+<span class="pc bpc" id="L127" title="1 of 2 branches missed.">		if(validPosition(i, j)) {</span>
+<span class="fc" id="L128">			return cells[i][j].isAlive();</span>
+		}
+		else {
+<span class="nc" id="L131">			throw new InvalidParameterException(&quot;Invalid position (&quot; + i + &quot;, &quot; + j + &quot;)&quot; );</span>
+		}
+	}
+
+	/**
+	 * Retorna o numero de celulas vivas no ambiente. 
+	 * Esse metodo eh particularmente util para o calculo de 
+	 * estatisticas e para melhorar a testabilidade.
+	 * 
+	 * @return  numero de celulas vivas.
+	 */
+	public int numberOfAliveCells() {
+<span class="fc" id="L143">		int aliveCells = 0;</span>
+<span class="fc bfc" id="L144" title="All 2 branches covered.">		for(int i = 0; i &lt; height; i++) {</span>
+<span class="fc bfc" id="L145" title="All 2 branches covered.">			for(int j = 0; j &lt; width; j++) {</span>
+<span class="fc bfc" id="L146" title="All 2 branches covered.">				if(isCellAlive(i,j)) {</span>
+<span class="fc" id="L147">					aliveCells++;</span>
+				}
+			}
+		}
+<span class="fc" id="L151">		return aliveCells;</span>
+	}
+
+	/*
+	 * Computa o numero de celulas vizinhas vivas, dada uma posicao no ambiente
+	 * de referencia identificada pelos argumentos (i,j).
+	 */
+	public int numberOfNeighborhoodAliveCells(int i, int j) {
+<span class="fc" id="L159">		int alive = 0, auxa, auxb;</span>
+<span class="fc bfc" id="L160" title="All 2 branches covered.">		for (int a = i - 1; a &lt;= i + 1; a++) {</span>
+<span class="fc bfc" id="L161" title="All 2 branches covered.">			for (int b = j - 1; b &lt;= j + 1; b++) {</span>
+<span class="fc bfc" id="L162" title="All 2 branches covered.">				if (validPosition(a, b)) {</span>
+<span class="fc bfc" id="L163" title="All 6 branches covered.">						if((!(a==i &amp;&amp; b == j)) &amp;&amp; cells[a][b].isAlive()) {</span>
+<span class="fc" id="L164">								alive++;</span>
+						}
+<span class="pc bpc" id="L166" title="1 of 8 branches missed.">				} else if (a == -1 || a == height || b == -1 || b == width) {</span>
+<span class="fc" id="L167">					auxa = a; auxb = b;</span>
+<span class="fc bfc" id="L168" title="All 2 branches covered.">					if(a == -1){</span>
+<span class="fc" id="L169">						auxa = (height-1);</span>
+					}
+<span class="fc bfc" id="L171" title="All 2 branches covered.">					if(a == height){</span>
+<span class="fc" id="L172">						auxa = 0;</span>
+					}
+<span class="fc bfc" id="L174" title="All 2 branches covered.">					if(b == -1){</span>
+<span class="fc" id="L175">						auxb = (width-1);</span>
+					}
+<span class="fc bfc" id="L177" title="All 2 branches covered.">					if(b == width){</span>
+<span class="fc" id="L178">						auxb = 0;</span>
+					}
+<span class="pc bpc" id="L180" title="1 of 6 branches missed.">					if((!(auxa==i &amp;&amp; auxb == j)) &amp;&amp; cells[auxa][auxb].isAlive()) {</span>
+<span class="fc" id="L181">						alive++;</span>
+					}
+		
+				}
+			}
+		}
+<span class="fc" id="L187">		return alive;</span>
+	}
+
+	/*
+	 * Verifica se uma posicao (a, b) referencia uma celula valida no tabuleiro.
+	 */
+	private boolean validPosition(int a, int b) {
+<span class="fc bfc" id="L194" title="All 8 branches covered.">		return a &gt;= 0 &amp;&amp; a &lt; height &amp;&amp; b &gt;= 0 &amp;&amp; b &lt; width;</span>
+	}
+	
+	public void randomizar(){
+<span class="fc" id="L198">		Random gerador = new Random();</span>
+<span class="fc" id="L199">		int count = height * width / 5;</span>
+<span class="fc bfc" id="L200" title="All 2 branches covered.">        for (int k = 0; k &lt; count; k++) {</span>
+<span class="fc" id="L201">            int i = gerador.nextInt(height);</span>
+<span class="fc" id="L202">            int j = gerador.nextInt(width);</span>
+<span class="fc bfc" id="L203" title="All 2 branches covered.">            if(!isCellAlive(i, j)){</span>
+<span class="fc" id="L204">            	makeCellAlive(i, j);</span>
+            }
+        }
+<span class="fc" id="L207">	}</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.2.201409121644</span>Main (2) (13/10/2015 14:20:13)</div></body></html>

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="pt"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../../.resources/report.gif" type="image/gif"/><title>Move.java</title><link rel="stylesheet" href="../../../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../../.sessions.html" class="el_session">Sessions</a></span><a href="../../../index.html" class="el_report">Main (2) (13/10/2015 14:20:13)</a> &gt; <a href="../../index.html" class="el_group">GameOfLife</a> &gt; <a href="../index.html" class="el_bundle">src/main/java</a> &gt; <a href="index.source.html" class="el_package">br.unb.cic.lp.gol.estrategias</a> &gt; <span class="el_source">Move.java</span></div><h1>Move.java</h1><pre class="source lang-java linenums">package br.unb.cic.lp.gol.estrategias;
+
+import br.unb.cic.lp.gol.EstrategiaDeDerivacao;
+import br.unb.cic.lp.gol.GameEngine;
+
+
+<span class="fc" id="L7">public class Move implements EstrategiaDeDerivacao {</span>
+
+	@Override
+	public boolean shouldKeepAlive(int i, int j, GameEngine engine) {
+<span class="fc bfc" id="L11" title="All 2 branches covered.">		return engine.isCellAlive(i, j) &amp;&amp; </span>
+<span class="fc bfc" id="L12" title="All 2 branches covered.">				engine.numberOfNeighborhoodAliveCells(i, j) == 2 ||</span>
+<span class="fc bfc" id="L13" title="All 2 branches covered.">				engine.numberOfNeighborhoodAliveCells(i, j) == 4 ||</span>
+<span class="fc bfc" id="L14" title="All 2 branches covered.">				engine.numberOfNeighborhoodAliveCells(i, j) == 5;</span>
+	}
+
+	@Override
+	public boolean shouldRevive(int i, int j, GameEngine engine) {
+<span class="fc bfc" id="L19" title="All 2 branches covered.">		return !engine.isCellAlive(i, j) &amp;&amp;</span>
+<span class="fc bfc" id="L20" title="All 2 branches covered.">				engine.numberOfNeighborhoodAliveCells(i, j) == 3 ||</span>
+<span class="fc bfc" id="L21" title="All 2 branches covered.">				engine.numberOfNeighborhoodAliveCells(i, j) == 6 ||</span>
+<span class="fc bfc" id="L22" title="All 2 branches covered.">				engine.numberOfNeighborhoodAliveCells(i, j) == 8; </span>
+	}
+
+	
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.2.201409121644</span>Main (2) (13/10/2015 14:20:13)</div></body></html>
